@@ -34,36 +34,35 @@ jobs:
         run: ./gradlew bootJar
 
       - name: Build Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server .
 
-          - name: Login to Docker Hub
-            run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-          - name: Push Docker image to Docker Hub
-            run: docker push ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
 
-          - name: SSH into EC2 and deploy container
-            uses: appleboy/ssh-action@master
-            with:
-              host: ${{ secrets.REMOTE_IP }}
-              username: ${{ secrets.REMOTE_SSH_ID }}
-              key: ${{ secrets.REMOTE_SSH_KEY }}
-              port: ${{ secrets.REMOTE_SSH_PORT }}
-              script: |
-                docker stop gonggumoa-server || true
-                docker rm gonggumoa-server || true
-                docker pull ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
-                docker run -d -p 8080:8080 \
-                  -e PROD_DB_URL=${{ secrets.PROD_DB_URL }} \
-                  -e PROD_DB_USER=${{ secrets.PROD_DB_USER }} \
-                  -e PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
-                  --name gonggumoa-server \
-                  ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
+      - name: SSH into EC2 and deploy container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_IP }}
+          username: ${{ secrets.REMOTE_SSH_ID }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.REMOTE_SSH_PORT }}
+          script: |
+            docker stop gonggumoa-server || true
+            docker rm gonggumoa-server || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
+            docker run -d -p 8080:8080 \
+              -e PROD_DB_URL=${{ secrets.PROD_DB_URL }} \
+              -e PROD_DB_USER=${{ secrets.PROD_DB_USER }} \
+              -e PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
+              --name gonggumoa-server \
+              ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
 
-          - name: Health Check
-            uses: jtalk/url-health-check-action@v4
-            with:
-              url: http://${{ secrets.REMOTE_IP }}:8080/actuator/health
-              max-attempts: 7
-              retry-delay: 10s
+      - name: Health Check
+        uses: jtalk/url-health-check-action@v4
+        with:
+          url: http://${{ secrets.REMOTE_IP }}:8080/actuator/health
+          max-attempts: 7
+          retry-delay: 10s
