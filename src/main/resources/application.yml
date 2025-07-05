@@ -1,0 +1,84 @@
+spring:
+  application:
+    name: gonggumoa
+  profiles:
+    group:
+      local: db-local, port-local, common
+      prod: db-prod, port-prod, common
+    active: prod
+
+---
+
+# ✅ 로컬 DB 설정
+spring:
+  config:
+    activate:
+      on-profile: db-local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/gonggumoa
+    username: ${LOCAL_DB_USER}
+    password: ${LOCAL_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+---
+
+# ✅ RDS(prod) DB 설정
+spring:
+  config:
+    activate:
+      on-profile: db-prod
+
+  datasource:
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USER}
+    password: ${PROD_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+---
+
+# ✅ prod 서버 포트 설정
+spring:
+  config:
+    activate:
+      on-profile: port-prod
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+---
+
+# ✅ 공통 설정
+spring:
+  config:
+    activate:
+      on-profile: common
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
