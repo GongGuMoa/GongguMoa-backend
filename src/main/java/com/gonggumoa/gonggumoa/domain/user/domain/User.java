@@ -18,9 +18,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "login_id", nullable = false, unique = true, length = 30)
-    private String loginId;
-
     @Column(name = "password_hash", nullable = false, length = 255)
     private String password;
 
@@ -52,9 +49,8 @@ public class User {
     private String profileImageUrl;
 
     @Builder
-    public User(String loginId, String password, String email, String name, String nickname,
+    public User(String password, String email, String name, String nickname,
                 String phoneNumber, LocalDate birthdate) {
-        this.loginId = loginId;
         this.password = password;
         this.email = email;
         this.name = name;
@@ -62,5 +58,4 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.birthdate = birthdate;
     }
-
 }

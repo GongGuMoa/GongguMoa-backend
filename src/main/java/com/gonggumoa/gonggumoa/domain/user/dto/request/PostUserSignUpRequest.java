@@ -3,7 +3,8 @@ package com.gonggumoa.gonggumoa.domain.user.dto.request;
 import jakarta.validation.constraints.*;
 public record PostUserSignUpRequest(
         @NotBlank
-        String loginId,
+        @Email(message = "INVALID_EMAIL_FORMAT")
+        String email,
 
         @NotBlank
         @Pattern(
@@ -12,14 +13,17 @@ public record PostUserSignUpRequest(
         )
         String password,
 
-        @NotBlank
-        @Email(message = "INVALID_EMAIL_FORMAT")
-        String email,
+        @NotBlank(message = "REQUIRED_FIELD_MISSING")
+        String passwordConfirm,
 
         @NotBlank
         String name,
 
         @NotBlank
+        @Pattern(
+                regexp = "^(?=.*[a-zA-Z가-힣])[a-zA-Z가-힣0-9]{2,8}$",
+                message = "INVALID_NICKNAME_FORMAT"
+        )
         String nickname,
 
         @NotBlank
@@ -27,9 +31,7 @@ public record PostUserSignUpRequest(
         String phoneNumber,
 
         @NotBlank
-        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "INVALID_BIRTHDATE_FORMAT")
-        String birthdate,
+        @Pattern(regexp = "^\\d{8}", message = "INVALID_BIRTHDATE_FORMAT")
+        String birthdate
 
-        @AssertTrue(message = "AGREEMENT_NOT_ACCEPTED")
-        boolean agreementVerified
 ) {}

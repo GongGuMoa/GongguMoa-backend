@@ -15,8 +15,20 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public BaseResponse<PostUserSignUpResponse> login(@Valid @RequestBody PostUserSignUpRequest request) {
+    public BaseResponse<PostUserSignUpResponse> Signup(@Valid @RequestBody PostUserSignUpRequest request) {
         return BaseResponse.ok(userService.signUp(request));
+    }
+
+    @GetMapping("/check-email")
+    public BaseResponse<Void> checkEmailDuplicate(@RequestParam String email) {
+        userService.validateEmail(email);
+        return BaseResponse.ok(null);
+    }
+
+    @GetMapping("/check-phone")
+    public BaseResponse<Void> checkPhoneDuplicate(@RequestParam String phone) {
+        userService.validatePhoneNumber(phone);
+        return BaseResponse.ok(null);
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.gonggumoa.gonggumoa.global.response.status.UserExceptionResponseStatus.*;
 
@@ -20,21 +21,27 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public PostUserSignUpResponse signUp(PostUserSignUpRequest req) {
-
-        if (userRepository.existsByLoginId(req.loginId())) {
-            throw new CustomException(USER_ALREADY_EXISTS);
-        }
-        if (userRepository.existsByEmail(req.email())) {
+    public void validateEmail(String email) {
+        if (userRepository.existsByEmail(email)) {
             throw new CustomException(EMAIL_ALREADY_EXISTS);
         }
-        if (userRepository.existsByPhoneNumber(req.phoneNumber())) {
+    }
+
+    public void validatePhoneNumber(String phoneNumber) {
+        if (userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new CustomException(PHONENUM_ALREADY_EXISTS);
+        }
+    }
+
+    public PostUserSignUpResponse signUp(PostUserSignUpRequest req) {
+        if (!req.password().equals(req.passwordConfirm())) {
+            throw new CustomException(PASSWORDS_DO_NOT_MATCH);
         }
 
         LocalDate birthdate;
         try {
-            birthdate = LocalDate.parse(req.birthdate());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            birthdate = LocalDate.parse(req.birthdate(), formatter);
             if (birthdate.isAfter(LocalDate.now())) {
                 throw new CustomException(INVALID_BIRTHDATE);
             }
@@ -43,7 +50,6 @@ public class UserService {
         }
 
         User user = User.builder()
-                .loginId(req.loginId())
                 .password(passwordEncoder.encode(req.password()))
                 .email(req.email())
                 .name(req.name())
