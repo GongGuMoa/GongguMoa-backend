@@ -1,17 +1,20 @@
 package com.gonggumoa.gonggumoa.global.exception.handler;
 
 import com.gonggumoa.gonggumoa.global.exception.BadRequestException;
+import com.gonggumoa.gonggumoa.global.exception.CustomException;
 import com.gonggumoa.gonggumoa.global.response.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import static com.gonggumoa.gonggumoa.global.response.status.BaseExceptionResponseStatus.*;
@@ -45,5 +48,7 @@ public class GlobalControllerAdvice {
         log.error("[handle_RuntimeException]", e);
         return new BaseErrorResponse(INTERNAL_SERVER_ERROR);
     }
+
+
 
 }

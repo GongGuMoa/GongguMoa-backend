@@ -1,7 +1,6 @@
 package com.gonggumoa.gonggumoa.global.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.gonggumoa.gonggumoa.global.response.status.BaseExceptionResponseStatus;
 import com.gonggumoa.gonggumoa.global.response.status.ResponseStatus;
 import lombok.Getter;
 
@@ -9,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @JsonPropertyOrder({"success", "code", "message","data"})
-public class BaseErrorResponse implements ResponseStatus{
+public class BaseErrorResponse {
     private final boolean success;
     private final int code;
     private final String message;
@@ -27,19 +26,6 @@ public class BaseErrorResponse implements ResponseStatus{
         this.code = status.getCode();
         this.message = message;
         this.data = null;
-    }
-
-    @Override
-    public boolean getSuccess() {
-        return this.success;
-    }
-    @Override
-    public int getCode() {
-        return this.code;
-    }
-    @Override
-    public String getMessage() {
-        return this.message;
     }
 
 }
