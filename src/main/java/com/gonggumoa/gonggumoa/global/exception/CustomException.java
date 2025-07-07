@@ -4,11 +4,10 @@ import com.gonggumoa.gonggumoa.global.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class BadRequestException extends RuntimeException {
-
+public class CustomException extends RuntimeException {
     private final ResponseStatus status;
 
-    public BadRequestException(ResponseStatus status) {
+    public CustomException(ResponseStatus status) {
         super(status.getMessage());
         this.status = status;
     }
