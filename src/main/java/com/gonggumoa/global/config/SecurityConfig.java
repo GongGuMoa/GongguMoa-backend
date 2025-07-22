@@ -1,4 +1,4 @@
-package com.gonggumoa.gonggumoa.global.config;
+package com.gonggumoa.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

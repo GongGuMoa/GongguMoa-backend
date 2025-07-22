@@ -1,4 +1,4 @@
-package com.gonggumoa.gonggumoa;
+package com.gonggumoa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
