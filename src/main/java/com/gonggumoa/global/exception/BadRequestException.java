@@ -1,6 +1,6 @@
-package com.gonggumoa.gonggumoa.global.exception;
+package com.gonggumoa.global.exception;
 
-import com.gonggumoa.gonggumoa.global.response.status.ResponseStatus;
+import com.gonggumoa.global.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
