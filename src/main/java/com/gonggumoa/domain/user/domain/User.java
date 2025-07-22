@@ -1,4 +1,4 @@
-package com.gonggumoa.gonggumoa.domain.user.domain;
+package com.gonggumoa.domain.user.domain;
 
 
 import jakarta.persistence.*;
@@ -27,7 +27,7 @@ public class User {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 30, unique = true)
     private String nickname;
 
     @Column(name = "phone_number", nullable = false, unique = true, length = 20)

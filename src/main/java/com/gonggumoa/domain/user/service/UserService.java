@@ -1,10 +1,10 @@
-package com.gonggumoa.gonggumoa.domain.user.service;
+package com.gonggumoa.domain.user.service;
 
-import com.gonggumoa.gonggumoa.domain.user.domain.User;
-import com.gonggumoa.gonggumoa.domain.user.dto.request.PostUserSignUpRequest;
-import com.gonggumoa.gonggumoa.domain.user.dto.response.PostUserSignUpResponse;
-import com.gonggumoa.gonggumoa.domain.user.repository.UserRepository;
-import com.gonggumoa.gonggumoa.global.exception.CustomException;
+import com.gonggumoa.domain.user.domain.User;
+import com.gonggumoa.domain.user.dto.request.PostUserSignUpRequest;
+import com.gonggumoa.domain.user.dto.response.PostUserSignUpResponse;
+import com.gonggumoa.domain.user.exception.*;
+import com.gonggumoa.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.gonggumoa.gonggumoa.global.response.status.UserExceptionResponseStatus.*;
+import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,30 +24,31 @@ public class UserService {
 
     public void validateEmail(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new CustomException(EMAIL_ALREADY_EXISTS);
+            throw new EmailAlreadyExistsException(EMAIL_ALREADY_EXISTS);
         }
     }
 
     public void validatePhoneNumber(String phoneNumber) {
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new CustomException(PHONENUM_ALREADY_EXISTS);
+            throw new PhoneAlreadyExistsException(PHONE_ALREADY_EXISTS);
         }
     }
 
     public PostUserSignUpResponse signUp(PostUserSignUpRequest req) {
         if (!req.password().equals(req.passwordConfirm())) {
-            throw new CustomException(PASSWORDS_DO_NOT_MATCH);
+            throw new PasswordsNotMatchException(PASSWORDS_NOT_MATCH);
+        }
+
+        if (userRepository.existsByNickname(req.nickname())) {
+            throw new NicknameAlreadyExistsException(NICKNAME_ALREADY_EXISTS);
         }
 
         LocalDate birthdate;
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            birthdate = LocalDate.parse(req.birthdate(), formatter);
-            if (birthdate.isAfter(LocalDate.now())) {
-                throw new CustomException(INVALID_BIRTHDATE);
-            }
-        } catch (Exception e) {
-            throw new CustomException(INVALID_BIRTHDATE_FORMAT);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        birthdate = LocalDate.parse(req.birthdate(), formatter);
+        if (birthdate.isAfter(LocalDate.now())) {
+            throw new InvalidBirthdateException(INVALID_BIRTHDATE);
         }
 
         User user = User.builder()

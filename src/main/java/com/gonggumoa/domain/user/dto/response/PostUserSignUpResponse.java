@@ -1,4 +1,4 @@
-package com.gonggumoa.gonggumoa.domain.user.dto.response;
+package com.gonggumoa.domain.user.dto.response;
 
 public record PostUserSignUpResponse(Long id) {
     public static PostUserSignUpResponse of(Long id) {
