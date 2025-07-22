@@ -62,7 +62,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return PostUserSignUpResponse.of(user.getId());
+        return PostUserSignUpResponse.of(user.getUserId());
     }
 
 }
