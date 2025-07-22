@@ -1,7 +1,8 @@
 package com.gonggumoa.domain.user.service;
 
 import com.gonggumoa.domain.user.domain.User;
-import com.gonggumoa.domain.user.dto.request.PostUserEmailCodeRequest;
+import com.gonggumoa.domain.user.dto.request.PostUserCheckEmailCodeRequest;
+import com.gonggumoa.domain.user.dto.request.PostUserSendEmailCodeRequest;
 import com.gonggumoa.domain.user.dto.request.PostUserSignUpRequest;
 import com.gonggumoa.domain.user.dto.response.PostUserSignUpResponse;
 import com.gonggumoa.domain.user.exception.*;
@@ -75,7 +76,7 @@ public class UserService {
         return PostUserSignUpResponse.of(user.getUserId());
     }
 
-    public void sendEmailVerificationCode(PostUserEmailCodeRequest req) {
+    public void sendEmailVerificationCode(PostUserSendEmailCodeRequest req) {
         String code = String.valueOf((int)(Math.random() * 900000) + 100000);
         redisTemplate.opsForValue().set(req.email(), code, Duration.ofMinutes(3));
 
@@ -89,4 +90,20 @@ public class UserService {
             throw new EmailCodeSendFailedException(EMAIL_CODE_SEND_FAILED);
         }
     }
+
+    public void checkEmailVerificationCode(PostUserCheckEmailCodeRequest req) {
+        String storedCode = redisTemplate.opsForValue().get(req.email());
+
+        if (storedCode == null) {
+            throw new EmailCodeExpiredException(EMAIL_CODE_EXPIRED);
+        }
+
+        if (!storedCode.equals(req.code())) {
+            throw new EmailCodeNotMatchException(EMAIL_CODE_NOT_MATCH);
+        }
+
+        redisTemplate.delete(req.email());
+        redisTemplate.opsForValue().set("verified:" + req.email(), "true");
+    }
+
 }
