@@ -22,6 +22,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     INVALID_BIRTHDATE_FORMAT(60008, "생년월일 형식이 올바르지 않습니다."),
     INVALID_BIRTHDATE(60009, "유효한 생년월일이 아닙니다."),
     PASSWORDS_NOT_MATCH(60010, "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+    EMAIL_CODE_SEND_FAILED(60011, "이메일 인증 코드 전송에 실패했습니다."),
 
 
     ;
