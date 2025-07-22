@@ -1,5 +1,7 @@
 package com.gonggumoa.domain.user.controller;
 
+import com.gonggumoa.domain.user.dto.request.PostUserCheckEmailCodeRequest;
+import com.gonggumoa.domain.user.dto.request.PostUserSendEmailCodeRequest;
 import com.gonggumoa.domain.user.dto.request.PostUserSignUpRequest;
 import com.gonggumoa.domain.user.dto.response.PostUserSignUpResponse;
 import com.gonggumoa.domain.user.service.UserService;
@@ -52,5 +54,34 @@ public class UserController {
         userService.validatePhoneNumber(phone);
         return ResponseEntity.ok(BaseResponse.ok(null));
     }
+
+    @Operation(summary = "닉네임 중복 확인", description = "중복되는 닉네임이 있는지 확인합니다.")
+    @GetMapping("/check-nickname")
+    @DocumentedApiErrors({NICKNAME_ALREADY_EXISTS})
+    public ResponseEntity<BaseResponse<Void>> checkNicknameDuplicate(
+            @RequestParam String nickname) {
+        userService.validateNickname(nickname);
+        return ResponseEntity.ok(BaseResponse.ok(null));
+    }
+
+    @Operation(summary = "이메일 인증코드 발송", description = "이메일에 인증 코드를 발송합니다.")
+    @PostMapping("/email-code")
+    @DocumentedApiErrors({EMAIL_CODE_SEND_FAILED})
+    public ResponseEntity<BaseResponse<Void>> sendEmailVerificationCode (
+            @Valid @RequestBody PostUserSendEmailCodeRequest request) {
+        userService.sendEmailVerificationCode(request);
+        return ResponseEntity.ok(BaseResponse.ok(null));
+    }
+
+    @Operation(summary = "이메일 인증코드 확인", description = "입력한 인증코드를 검증합니다.")
+    @PostMapping("/check-emailcode")
+    @DocumentedApiErrors({EMAIL_CODE_EXPIRED, EMAIL_CODE_NOT_MATCH})
+    public ResponseEntity<BaseResponse<Void>> checkEmailCode(
+            @RequestBody PostUserCheckEmailCodeRequest request) {
+        userService.checkEmailVerificationCode(request);
+        return ResponseEntity.ok(BaseResponse.ok(null));
+    }
+
+
 
 }
