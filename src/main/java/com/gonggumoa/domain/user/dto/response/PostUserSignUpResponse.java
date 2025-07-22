@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public record PostUserSignUpResponse(
         @Schema(description = "회원가입 성공한 회원 ID", example = "1")
-        Long id
+        Long userId
 ) {
-    public static PostUserSignUpResponse of(Long id) {
-        return new PostUserSignUpResponse(id);
+    public static PostUserSignUpResponse of(Long userId) {
+        return new PostUserSignUpResponse(userId);
     }
 }
