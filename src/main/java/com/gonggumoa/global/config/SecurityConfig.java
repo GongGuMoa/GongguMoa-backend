@@ -25,11 +25,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/actuator/health",
                                 "/users/**",
+
+                                // Swagger 
                                 "/docs/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-resources/**",
+                                "/webjars/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
