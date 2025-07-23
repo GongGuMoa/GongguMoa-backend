@@ -54,14 +54,15 @@ jobs:
             docker rm gonggumoa-server || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
             docker run -d -p 8080:8080 \
-              --add-host=host.docker.internal:host-gateway \
-              -e PROD_DB_URL=${{ secrets.PROD_DB_URL }} \
-              -e PROD_DB_USER=${{ secrets.PROD_DB_USER }} \
-              -e PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
-              -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              --name gonggumoa-server \
-              ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
+            --add-host=host.docker.internal:host-gateway \
+            -e PROD_DB_URL=${{ secrets.PROD_DB_URL }} \
+            -e PROD_DB_USER=${{ secrets.PROD_DB_USER }} \
+            -e PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
+            -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            --name gonggumoa-server \
+            ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
+
 
       - name: Health Check
         uses: jtalk/url-health-check-action@v4
