@@ -92,5 +92,23 @@ public class UserControllerAdvice {
         return ResponseEntity.badRequest().body(new BaseErrorResponse(EMAIL_CODE_NOT_MATCH));
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<BaseErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
+        return ResponseEntity.badRequest().body(new BaseErrorResponse(USER_NOT_FOUND));
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<BaseErrorResponse> handleInvalidRefreshTokenException(InvalidRefreshTokenException e) {
+        return ResponseEntity.badRequest().body(new BaseErrorResponse(INVALID_REFRESH_TOKEN));
+    }
+
+    @ExceptionHandler(RequiredFieldMissingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<BaseErrorResponse> handleRequiredFieldMissingException(RequiredFieldMissingException e) {
+        return ResponseEntity.badRequest().body(new BaseErrorResponse(REQUIRED_FIELD_MISSING));
+    }
+
 
 }
