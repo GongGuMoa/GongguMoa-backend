@@ -17,7 +17,7 @@ import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*
 
 @Tag(name = "User", description = "UserController - 회원 관련 API")
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
