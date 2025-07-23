@@ -4,10 +4,10 @@ import com.gonggumoa.global.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class EmailCodeNotMatchException extends RuntimeException {
+public class UserNotFoundException extends RuntimeException {
     private final ResponseStatus exceptionStatus;
 
-    public EmailCodeNotMatchException(ResponseStatus exceptionStatus) {
+    public UserNotFoundException(ResponseStatus exceptionStatus) {
         super(exceptionStatus.getMessage());
         this.exceptionStatus = exceptionStatus;
     }

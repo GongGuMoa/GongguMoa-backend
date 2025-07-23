@@ -4,10 +4,10 @@ import com.gonggumoa.global.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class EmailCodeNotMatchException extends RuntimeException {
+public class InvalidRefreshTokenException extends RuntimeException {
     private final ResponseStatus exceptionStatus;
 
-    public EmailCodeNotMatchException(ResponseStatus exceptionStatus) {
+    public InvalidRefreshTokenException(ResponseStatus exceptionStatus) {
         super(exceptionStatus.getMessage());
         this.exceptionStatus = exceptionStatus;
     }
