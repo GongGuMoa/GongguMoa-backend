@@ -1,13 +1,13 @@
 package com.gonggumoa.domain.user.service;
 
 import com.gonggumoa.domain.user.domain.User;
-import com.gonggumoa.domain.user.dto.request.PostUserCheckEmailCodeRequest;
-import com.gonggumoa.domain.user.dto.request.PostUserSendEmailCodeRequest;
-import com.gonggumoa.domain.user.dto.request.PostUserSignUpRequest;
-import com.gonggumoa.domain.user.dto.response.PostUserSignUpResponse;
+import com.gonggumoa.domain.user.dto.request.*;
+import com.gonggumoa.domain.user.dto.response.*;
 import com.gonggumoa.domain.user.exception.*;
 import com.gonggumoa.domain.user.repository.UserRepository;
 
+import com.gonggumoa.global.jwt.JwtTokenProvider;
+import com.gonggumoa.global.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailException;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*;
 
@@ -30,6 +31,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
     private final RedisTemplate<String, String> redisTemplate;
+    private final JwtTokenProvider tokenProvider;
+    private final RedisService redisService;
+
 
     public void validateEmail(String email) {
         if (userRepository.existsByEmail(email)) {
@@ -104,6 +108,42 @@ public class UserService {
 
         redisTemplate.delete(req.email());
         redisTemplate.opsForValue().set("verified:" + req.email(), "true");
+    }
+
+    public PostUserLoginResponse login(PostUserLoginRequest request) {
+        Optional<User> userOpt = userRepository.findByEmailOrPhone(request.identifier());
+
+        // 액세스 토큰 만료됐을때 리프레시 토큰으로 로그인
+        if (userOpt.isEmpty() && tokenProvider.validateToken(request.identifier())) {
+            Long userId = tokenProvider.getUserId(request.identifier());
+            String stored = redisService.getRefreshToken(userId);
+
+            if (!request.identifier().equals(stored)) {
+                throw new InvalidRefreshTokenException(INVALID_REFRESH_TOKEN);
+            }
+
+            String newAccessToken = tokenProvider.createAccessToken(userId);
+            return new PostUserLoginResponse(userId, newAccessToken, request.identifier());
+        }
+
+        // 일반 로그인
+        if (request.password() == null || request.password().isBlank()) {
+            throw new RequiredFieldMissingException(REQUIRED_FIELD_MISSING);
+        }
+
+        User user = userOpt
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new UserNotFoundException(USER_NOT_FOUND);
+        }
+
+        String accessToken = tokenProvider.createAccessToken(user.getUserId());
+        String refreshToken = tokenProvider.createRefreshToken(user.getUserId());
+
+        redisService.saveRefreshToken(user.getUserId(), refreshToken, tokenProvider.getRefreshTokenExpireMillis());
+
+        return new PostUserLoginResponse(user.getUserId(), accessToken, refreshToken);
     }
 
 }
