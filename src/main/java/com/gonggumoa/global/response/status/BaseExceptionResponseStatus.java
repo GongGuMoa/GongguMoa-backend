@@ -25,6 +25,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     EMAIL_CODE_SEND_FAILED(60011, "이메일 인증 코드 전송에 실패했습니다."),
     EMAIL_CODE_EXPIRED(60012, "인증코드가 만료되었거나 존재하지 않습니다."),
     EMAIL_CODE_NOT_MATCH(60013, "인증코드가 일치하지 않습니다."),
+    USER_NOT_FOUND(60014, "존재하지 않는 회원입니다."),
+    INVALID_REFRESH_TOKEN(60015, "유효하지 않은 리프레시 토큰입니다."),
 
     ;
 

@@ -1,9 +1,7 @@
 package com.gonggumoa.domain.user.controller;
 
-import com.gonggumoa.domain.user.dto.request.PostUserCheckEmailCodeRequest;
-import com.gonggumoa.domain.user.dto.request.PostUserSendEmailCodeRequest;
-import com.gonggumoa.domain.user.dto.request.PostUserSignUpRequest;
-import com.gonggumoa.domain.user.dto.response.PostUserSignUpResponse;
+import com.gonggumoa.domain.user.dto.request.*;
+import com.gonggumoa.domain.user.dto.response.*;
 import com.gonggumoa.domain.user.service.UserService;
 import com.gonggumoa.global.docs.DocumentedApiErrors;
 import com.gonggumoa.global.response.BaseResponse;
@@ -80,6 +78,14 @@ public class UserController {
             @RequestBody PostUserCheckEmailCodeRequest request) {
         userService.checkEmailVerificationCode(request);
         return ResponseEntity.ok(BaseResponse.ok(null));
+    }
+
+    @Operation(summary = "로그인", description = "이메일 또는 전화번호, 비밀번호로 로그인합니다.")
+    @PostMapping("/login")
+    @DocumentedApiErrors({INVALID_REFRESH_TOKEN, REQUIRED_FIELD_MISSING, USER_NOT_FOUND})
+    public ResponseEntity<PostUserLoginResponse> login(
+            @RequestBody @Valid PostUserLoginRequest request) {
+        return ResponseEntity.ok(userService.login(request));
     }
 
 
