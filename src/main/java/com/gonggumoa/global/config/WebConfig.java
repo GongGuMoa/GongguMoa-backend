@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:5173",  // 프론트 로컬 개발용 주소
-                        "http://127.0.0.1:5173"   // 프론트 배포 주소
+                        "https://gonggu-moa.vercel.app"   // 프론트 배포 주소
                 )
                 .allowedMethods("*")
                 .allowedHeaders("*")
