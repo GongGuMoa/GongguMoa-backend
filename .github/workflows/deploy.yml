@@ -62,7 +62,7 @@ jobs:
               -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
               --name gonggumoa-server \
               ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server
-
+              
       - name: Health Check
         uses: jtalk/url-health-check-action@v4
         with:
