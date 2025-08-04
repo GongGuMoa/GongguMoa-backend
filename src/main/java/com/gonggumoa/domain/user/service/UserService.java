@@ -6,8 +6,11 @@ import com.gonggumoa.domain.user.dto.response.*;
 import com.gonggumoa.domain.user.exception.*;
 import com.gonggumoa.domain.user.repository.UserRepository;
 
-import com.gonggumoa.global.jwt.JwtTokenProvider;
+import com.gonggumoa.global.context.UserContext;
+import com.gonggumoa.global.exception.RequiredFieldMissingException;
+import com.gonggumoa.global.security.jwt.JwtTokenProvider;
 import com.gonggumoa.global.redis.RedisService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailException;
@@ -146,4 +149,11 @@ public class UserService {
         return new PostUserLoginResponse(user.getUserId(), accessToken, refreshToken);
     }
 
+
+    @Transactional
+    public void setLocation(PostUserSetLocationRequest request) {
+        User user = UserContext.getUser();
+        user.updateLocation(request.latitude(), request.longitude(), request.location());
+        userRepository.save(user);
+    }
 }

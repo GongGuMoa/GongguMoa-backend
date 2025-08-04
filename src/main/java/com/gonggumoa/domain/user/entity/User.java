@@ -59,4 +59,10 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.birthdate = birthdate;
     }
+
+    public void updateLocation(Double latitude, Double longitude, String location) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.location = location;
+    }
 }
