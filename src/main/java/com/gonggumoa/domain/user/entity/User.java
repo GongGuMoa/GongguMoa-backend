@@ -1,4 +1,4 @@
-package com.gonggumoa.domain.user.domain;
+package com.gonggumoa.domain.user.entity;
 
 
 import jakarta.persistence.*;

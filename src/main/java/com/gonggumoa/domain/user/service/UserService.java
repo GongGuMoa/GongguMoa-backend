@@ -1,6 +1,6 @@
 package com.gonggumoa.domain.user.service;
 
-import com.gonggumoa.domain.user.domain.User;
+import com.gonggumoa.domain.user.entity.User;
 import com.gonggumoa.domain.user.dto.request.*;
 import com.gonggumoa.domain.user.dto.response.*;
 import com.gonggumoa.domain.user.exception.*;
