@@ -1,9 +1,6 @@
 package com.gonggumoa.domain.user.repository;
 
-import com.gonggumoa.domain.user.domain.User;
-import io.lettuce.core.dynamic.annotation.Param;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import com.gonggumoa.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -10,11 +10,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*;
 
-
+@Validated
 @Tag(name = "User", description = "UserController - 회원 관련 API")
 @RestController
 @RequestMapping("/api/users")
@@ -89,5 +90,13 @@ public class UserController {
     }
 
 
+    @Operation(summary = "내 위치 설정", description = "사용자의 현재 위치 또는 선택한 주소를 내 위치로 저장합니다.")
+    @PostMapping("/locations")
+    public ResponseEntity<BaseResponse<Void>> setLocation(
+            @RequestBody @Valid PostUserSetLocationRequest request
+    ) {
+        userService.setLocation(request);
+        return ResponseEntity.ok(BaseResponse.ok(null));
+    }
 
 }

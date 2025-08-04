@@ -1,4 +1,4 @@
-package com.gonggumoa.domain.user.exception;
+package com.gonggumoa.global.exception;
 
 import com.gonggumoa.global.response.status.ResponseStatus;
 import lombok.Getter;
