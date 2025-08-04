@@ -1,5 +1,8 @@
-package com.gonggumoa.global.jwt;
+package com.gonggumoa.global.security.jwt;
 
+import com.gonggumoa.global.context.UserContext;
+import com.gonggumoa.global.security.CustomUserDetails;
+import com.gonggumoa.global.security.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,22 +18,29 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        String token = resolveToken(request);
+        try {
+            String token = resolveToken(request);
 
-        if (token != null && tokenProvider.validateToken(token)) {
-            Long userId = tokenProvider.getUserId(token);
+            if (token != null && tokenProvider.validateToken(token)) {
+                Long userId = tokenProvider.getUserId(token);
+                CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userId.toString());
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userId, null, null);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, null);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                UserContext.set(userDetails);
+            }
+
+            chain.doFilter(request, response);
+        } finally {
+            UserContext.clear();
         }
-
-        chain.doFilter(request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {

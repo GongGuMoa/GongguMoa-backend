@@ -1,4 +1,4 @@
-package com.gonggumoa.global.jwt;
+package com.gonggumoa.global.security.jwt;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
