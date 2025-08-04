@@ -2,11 +2,15 @@ package com.gonggumoa.global.exception.handler;
 
 import com.gonggumoa.global.exception.BadRequestException;
 import com.gonggumoa.global.response.BaseErrorResponse;
+import com.gonggumoa.global.response.status.BaseExceptionResponseStatus;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +18,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.util.Set;
 
 import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*;
 
@@ -25,7 +31,7 @@ public class GlobalControllerAdvice {
 
     // 잘못된 요청일 경우
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({BadRequestException.class, TypeMismatchException.class, MethodArgumentNotValidException.class, MissingServletRequestParameterException.class})
+    @ExceptionHandler({BadRequestException.class, TypeMismatchException.class, MissingServletRequestParameterException.class})
     public BaseErrorResponse handle_BadRequest(Exception e){
         log.error("[handle_BadRequest]", e);
         return new BaseErrorResponse(BAD_REQUEST);
@@ -45,6 +51,47 @@ public class GlobalControllerAdvice {
     public BaseErrorResponse handle_RuntimeException(Exception e) {
         log.error("[handle_RuntimeException]", e);
         return new BaseErrorResponse(INTERNAL_SERVER_ERROR);
+    }
+
+    // RequestParam, PathVariable 등의 validation 실패 (예: @RequestParam 제약 위반)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public BaseErrorResponse handleConstraintViolation(Exception e) {
+        return new BaseErrorResponse(REQUIRED_FIELD_MISSING);
+    }
+
+    // DTO validation 실패 (예: @NotBlank, @NotNull 등)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        FieldError error = ex.getBindingResult().getFieldErrors().get(0);
+        String field = error.getField();
+        String reason = error.getCode();  // 예: NotNull, NotBlank, Pattern, Email 등
+        log.error("Validation error - field: {}, reason: {}", field, reason);
+
+        if (isUserField(field) && isFormatError(reason)) {
+            return ResponseEntity.badRequest().body(new BaseErrorResponse(mapUserFieldToError(field)));
+        }
+
+        return ResponseEntity.badRequest().body(new BaseErrorResponse(REQUIRED_FIELD_MISSING));
+    }
+
+    private boolean isUserField(String field) {
+        return Set.of("email", "password", "nickname", "phoneNumber", "birthdate").contains(field);
+    }
+
+    private boolean isFormatError(String reason) {
+        return Set.of("Pattern", "Email").contains(reason);
+    }
+
+    private BaseExceptionResponseStatus mapUserFieldToError(String field) {
+        return switch (field) {
+            case "email" -> INVALID_EMAIL_FORMAT;
+            case "password" -> INVALID_PASSWORD_FORMAT;
+            case "nickname" -> INVALID_NICKNAME_FORMAT;
+            case "phoneNumber" -> INVALID_PHONE_NUMBER_FORMAT;
+            case "birthdate" -> INVALID_BIRTHDATE_FORMAT;
+            default -> REQUIRED_FIELD_MISSING;
+        };
     }
 
 

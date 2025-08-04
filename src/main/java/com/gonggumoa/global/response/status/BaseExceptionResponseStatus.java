@@ -8,10 +8,9 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     BAD_REQUEST(40000, "유효하지 않은 요청입니다."),
     NOT_FOUND(40400, "존재하지 않는 API입니다."),
     INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다."),
-
+    REQUIRED_FIELD_MISSING(10000, "필수 입력 항목이 누락되었습니다."),
 
     //user 6000~
-    REQUIRED_FIELD_MISSING(60000, "필수 입력 항목이 누락되었습니다."),
     EMAIL_ALREADY_EXISTS(60001, "이미 사용 중인 이메일입니다."),
     PHONE_ALREADY_EXISTS(60002, "이미 사용 중인 전화번호입니다."),
     NICKNAME_ALREADY_EXISTS(60003,"이미 사용 중인 닉네임입니다."),
