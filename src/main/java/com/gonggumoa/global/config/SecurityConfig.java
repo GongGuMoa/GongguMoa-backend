@@ -37,15 +37,22 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/actuator/health",
-                                "/api/users/**",
 
-                                // Swagger 
+                                // Swagger
                                 "/docs/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
+                        .requestMatchers(
+                                "/api/users/login",
+                                "/api/users/register",
+                                "/api/users/check-email",
+                                "/api/users/check-phone"
+                        ).permitAll()
+                        .requestMatchers("/api/users/*")
+                        .authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider, userDetailsService),
