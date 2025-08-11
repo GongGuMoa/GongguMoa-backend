@@ -84,7 +84,7 @@ public class UserController {
     @Operation(summary = "로그인", description = "이메일 또는 전화번호, 비밀번호로 로그인합니다.")
     @PostMapping("/login")
     @DocumentedApiErrors({INVALID_REFRESH_TOKEN, REQUIRED_FIELD_MISSING, USER_NOT_FOUND})
-    public ResponseEntity<PostUserLoginResponse> login(
+    public ResponseEntity<BaseResponse<PostUserLoginResponse>> login(
             @RequestBody @Valid PostUserLoginRequest request) {
         return ResponseEntity.ok(BaseResponse.ok(userService.login(request)));
     }
