@@ -10,7 +10,6 @@ import com.gonggumoa.global.context.UserContext;
 import com.gonggumoa.global.exception.RequiredFieldMissingException;
 import com.gonggumoa.global.security.jwt.JwtTokenProvider;
 import com.gonggumoa.global.redis.RedisService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailException;
@@ -18,6 +17,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -29,7 +29,7 @@ import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -56,7 +56,8 @@ public class UserService {
             throw new NicknameAlreadyExistsException(NICKNAME_ALREADY_EXISTS);
         }
     }
-
+    
+    @Transactional
     public PostUserSignUpResponse signUp(PostUserSignUpRequest req) {
         if (!req.password().equals(req.passwordConfirm())) {
             throw new PasswordsNotMatchException(PASSWORDS_NOT_MATCH);
@@ -155,5 +156,6 @@ public class UserService {
     public void setLocation(PostUserSetLocationRequest request) {
         User user = UserContext.getUser();
         user.updateLocation(request.latitude(), request.longitude(), request.location());
+        userRepository.save(user);
     }
 }
