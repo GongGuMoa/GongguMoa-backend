@@ -29,6 +29,7 @@ import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -154,6 +155,5 @@ public class UserService {
     public void setLocation(PostUserSetLocationRequest request) {
         User user = UserContext.getUser();
         user.updateLocation(request.latitude(), request.longitude(), request.location());
-        userRepository.save(user);
     }
 }
