@@ -86,7 +86,7 @@ public class UserController {
     @DocumentedApiErrors({INVALID_REFRESH_TOKEN, REQUIRED_FIELD_MISSING, USER_NOT_FOUND})
     public ResponseEntity<PostUserLoginResponse> login(
             @RequestBody @Valid PostUserLoginRequest request) {
-        return ResponseEntity.ok(userService.login(request));
+        return ResponseEntity.ok(BaseResponse.ok(userService.login(request)));
     }
 
 
