@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 "/api/users/check-email",
                                 "/api/users/check-phone"
                         ).permitAll()
-                        .requestMatchers("/api/users/*")
+                        .requestMatchers("/api/users/**")
                         .authenticated()
                         .anyRequest().authenticated()
                 )
