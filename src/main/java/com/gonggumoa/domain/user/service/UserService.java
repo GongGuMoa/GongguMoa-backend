@@ -153,9 +153,19 @@ public class UserService {
 
 
     @Transactional
-    public void setLocation(PostUserSetLocationRequest request) {
+    public void setLocation(PostUserLocationRequest request) {
         User user = UserContext.getUser();
         user.updateLocation(request.latitude(), request.longitude(), request.location());
         userRepository.save(user);
+    }
+
+    public GetUserLocationResponse getMyLocation() {
+        User user = UserContext.getUser();
+
+        String address = user.getLocation() != null ? user.getLocation() : "";
+        Double latitude = user.getLatitude();
+        Double longitude = user.getLongitude();
+
+        return GetUserLocationResponse.of(address, latitude, longitude);
     }
 }
