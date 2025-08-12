@@ -93,10 +93,16 @@ public class UserController {
     @Operation(summary = "내 위치 설정", description = "사용자의 현재 위치 또는 선택한 주소를 내 위치로 저장합니다.")
     @PostMapping("/locations")
     public ResponseEntity<BaseResponse<Void>> setLocation(
-            @RequestBody @Valid PostUserSetLocationRequest request
+            @RequestBody @Valid PostUserLocationRequest request
     ) {
         userService.setLocation(request);
         return ResponseEntity.ok(BaseResponse.ok(null));
+    }
+
+    @Operation(summary = "내 저장된 위치 조회", description = "사용자의 저장된 위치를 조회합니다.")
+    @GetMapping("/locations")
+    public ResponseEntity<BaseResponse<GetUserLocationResponse>> getLocation() {
+        return ResponseEntity.ok(BaseResponse.ok(userService.getMyLocation()));
     }
 
 }
