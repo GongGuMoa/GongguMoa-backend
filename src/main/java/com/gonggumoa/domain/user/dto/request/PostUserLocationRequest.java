@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record PostUserSetLocationRequest(
+public record PostUserLocationRequest(
         @Schema(description = "위도", example = "37.5665")
         @NotNull
         Double latitude,
