@@ -1,6 +1,8 @@
 package com.gonggumoa.global.exception.handler;
 
 import com.gonggumoa.global.exception.BadRequestException;
+import com.gonggumoa.global.exception.RequiredFieldMissingException;
+import com.gonggumoa.global.exception.UnauthenticatedException;
 import com.gonggumoa.global.response.BaseErrorResponse;
 import com.gonggumoa.global.response.status.BaseExceptionResponseStatus;
 import jakarta.validation.ConstraintViolationException;
@@ -30,34 +32,35 @@ import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*
 public class GlobalControllerAdvice {
 
     // 잘못된 요청일 경우
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({BadRequestException.class, TypeMismatchException.class, MissingServletRequestParameterException.class})
-    public BaseErrorResponse handle_BadRequest(Exception e){
+    public ResponseEntity<BaseErrorResponse> handle_BadRequest(Exception e){
         log.error("[handle_BadRequest]", e);
-        return new BaseErrorResponse(BAD_REQUEST);
+        return ResponseEntity.badRequest().body(new BaseErrorResponse(BAD_REQUEST));
     }
 
     // 요청한 api가 없을 경우
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
-    public BaseErrorResponse handle_NoHandlerFoundException(Exception e){
+    public ResponseEntity<BaseErrorResponse> handle_NoHandlerFoundException(Exception e){
         log.error("[handle_NoHandlerFoundException]", e);
-        return new BaseErrorResponse(NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseErrorResponse(NOT_FOUND));
     }
 
     // 런타임 오류가 발생한 경우
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public BaseErrorResponse handle_RuntimeException(Exception e) {
+    public ResponseEntity<BaseErrorResponse> handle_RuntimeException(Exception e) {
         log.error("[handle_RuntimeException]", e);
-        return new BaseErrorResponse(INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BaseErrorResponse(INTERNAL_SERVER_ERROR));
     }
 
     // RequestParam, PathVariable 등의 validation 실패 (예: @RequestParam 제약 위반)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
-    public BaseErrorResponse handleConstraintViolation(Exception e) {
-        return new BaseErrorResponse(REQUIRED_FIELD_MISSING);
+    @ExceptionHandler({ConstraintViolationException.class, RequiredFieldMissingException.class})
+    public ResponseEntity<BaseErrorResponse> handleConstraintViolation(Exception e) {
+        return ResponseEntity.badRequest().body(new BaseErrorResponse(REQUIRED_FIELD_MISSING));
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    public ResponseEntity<BaseErrorResponse> handleUnauthenticatedException(Exception e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseErrorResponse(AUTH_UNAUTHENTICATED));
     }
 
     // DTO validation 실패 (예: @NotBlank, @NotNull 등)

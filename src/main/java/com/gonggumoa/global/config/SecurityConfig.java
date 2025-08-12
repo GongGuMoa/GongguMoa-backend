@@ -1,18 +1,27 @@
 package com.gonggumoa.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gonggumoa.global.exception.UnauthenticatedException;
+import com.gonggumoa.global.response.BaseErrorResponse;
 import com.gonggumoa.global.security.CustomUserDetailsService;
 import com.gonggumoa.global.security.jwt.JwtAuthenticationFilter;
 import com.gonggumoa.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.AUTH_UNAUTHENTICATED;
 
 @Configuration
 @EnableWebSecurity
@@ -21,7 +30,12 @@ public class SecurityConfig {
 
     private final JwtTokenProvider tokenProvider;
     private final CustomUserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper;
 
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(tokenProvider, userDetailsService);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -31,7 +45,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> {})
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -47,15 +62,17 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(
                                 "/api/users/login",
-                                "/api/users/register",
+                                "/api/users/signup",
                                 "/api/users/check-email",
+                                "/api/users/check-nickname",
+                                "/api/users/check-emailcode",
                                 "/api/users/check-phone"
                         ).permitAll()
                         .requestMatchers("/api/users/**")
                         .authenticated()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider, userDetailsService),
+                .addFilterBefore(jwtAuthenticationFilter(),
                         UsernamePasswordAuthenticationFilter.class)
                 ;
 
