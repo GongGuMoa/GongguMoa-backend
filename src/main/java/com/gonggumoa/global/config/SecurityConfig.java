@@ -48,6 +48,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {})
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(eh -> eh
+                        .authenticationEntryPoint((req, res, ex) -> {
+                            res.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            res.setContentType("application/json;charset=UTF-8");
+                            res.getWriter().write(objectMapper.writeValueAsString(
+                                    new BaseErrorResponse(AUTH_UNAUTHENTICATED)
+                            ));
+                        })
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
