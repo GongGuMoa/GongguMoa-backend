@@ -31,7 +31,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Spring Boot jar
-        run: ./gradlew bootJar
+        run: ./gradlew clean bootJar
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/gonggumoa-server .
