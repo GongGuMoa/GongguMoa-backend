@@ -65,4 +65,10 @@ public class User {
         this.longitude = longitude;
         this.location = location;
     }
+
+    public void updateInfo(String nickname, String password, String profileImageUrl) {
+        this.nickname = nickname;
+        this.password = password;
+        this.profileImageUrl = profileImageUrl;
+    }
 }
