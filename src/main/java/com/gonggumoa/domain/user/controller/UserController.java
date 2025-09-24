@@ -91,9 +91,9 @@ public class UserController {
 
 
     @Operation(summary = "내 위치 설정", description = "사용자의 현재 위치 또는 선택한 주소를 내 위치로 저장합니다.")
-    @PostMapping("/locations")
+    @PutMapping("/locations")
     public ResponseEntity<BaseResponse<Void>> setLocation(
-            @RequestBody @Valid PostUserLocationRequest request
+            @RequestBody @Valid PutUserLocationRequest request
     ) {
         userService.setLocation(request);
         return ResponseEntity.ok(BaseResponse.ok(null));
@@ -105,9 +105,18 @@ public class UserController {
         return ResponseEntity.ok(BaseResponse.ok(userService.getMyLocation()));
     }
 
-    @Operation(summary = "마이페이지 - 내 회원정보 조회", description = "사용자의 닉네임과 프로필 이미지를 조회합니다.")
+    @Operation(summary = "마이페이지 - 내 회원 정보 조회", description = "사용자의 닉네임과 프로필 이미지를 조회합니다.")
     @GetMapping("/me")
     public  ResponseEntity<BaseResponse<GetUserInfoResponse>> getUserInfo() {
         return ResponseEntity.ok(BaseResponse.ok(userService.getUserInfo()));
+    }
+
+    @Operation(summary = "마이페이지 - 내 회원 정보 수정", description = "닉네임, 비밀번호, 프로필 이미지를 수정합니다.")
+    @PutMapping("/me")
+    public ResponseEntity<BaseResponse<Void>> putUserInfo(
+            @RequestBody @Valid PutUserInfoRequest request
+    ) {
+        userService.putUserInfo(request);
+        return ResponseEntity.ok(BaseResponse.ok(null));
     }
 }
