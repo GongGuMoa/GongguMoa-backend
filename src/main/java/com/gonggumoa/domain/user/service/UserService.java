@@ -186,4 +186,11 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    @Transactional
+    public void deleteUser() {
+        User user = UserContext.getUser();
+
+        userRepository.delete(user);
+    }
 }
