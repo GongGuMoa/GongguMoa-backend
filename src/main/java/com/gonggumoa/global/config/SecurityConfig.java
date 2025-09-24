@@ -75,7 +75,8 @@ public class SecurityConfig {
                                 "/api/users/check-email",
                                 "/api/users/check-nickname",
                                 "/api/users/check-emailcode",
-                                "/api/users/check-phone"
+                                "/api/users/check-phone",
+                                "/api/users/email-code"
                         ).permitAll()
                         .requestMatchers("/api/users/**")
                         .authenticated()
