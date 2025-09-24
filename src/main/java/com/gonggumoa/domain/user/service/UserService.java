@@ -153,7 +153,7 @@ public class UserService {
 
 
     @Transactional
-    public void setLocation(PostUserLocationRequest request) {
+    public void setLocation(PutUserLocationRequest request) {
         User user = UserContext.getUser();
         user.updateLocation(request.latitude(), request.longitude(), request.location());
         userRepository.save(user);
@@ -172,5 +172,18 @@ public class UserService {
     public GetUserInfoResponse getUserInfo() {
         User user = UserContext.getUser();
         return GetUserInfoResponse.from(user);
+    }
+
+    @Transactional
+    public void putUserInfo(PutUserInfoRequest request) {
+        User user = UserContext.getUser();
+
+        String profileImageUrl = request.profileImageUrl().isBlank()
+                ? null
+                : request.profileImageUrl();
+
+        user.updateInfo(request.nickname(), passwordEncoder.encode(request.password()), profileImageUrl);
+
+        userRepository.save(user);
     }
 }
