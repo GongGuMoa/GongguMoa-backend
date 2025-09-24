@@ -119,4 +119,11 @@ public class UserController {
         userService.putUserInfo(request);
         return ResponseEntity.ok(BaseResponse.ok(null));
     }
+
+    @Operation(summary = "마이페이지 - 회원 탈퇴", description = "현재 로그인한 사용자를 탈퇴 처리합니다.")
+    @DeleteMapping("/me")
+    public ResponseEntity<BaseResponse<Void>> deleteUser() {
+        userService.deleteUser();
+        return ResponseEntity.ok(BaseResponse.ok(null));
+    }
 }
