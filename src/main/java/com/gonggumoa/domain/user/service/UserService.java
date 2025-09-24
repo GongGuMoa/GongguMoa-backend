@@ -168,4 +168,9 @@ public class UserService {
 
         return GetUserLocationResponse.of(address, latitude, longitude);
     }
+
+    public GetUserInfoResponse getUserInfo() {
+        User user = UserContext.getUser();
+        return GetUserInfoResponse.from(user);
+    }
 }

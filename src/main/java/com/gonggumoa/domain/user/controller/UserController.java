@@ -105,4 +105,9 @@ public class UserController {
         return ResponseEntity.ok(BaseResponse.ok(userService.getMyLocation()));
     }
 
+    @Operation(summary = "마이페이지 - 내 회원정보 조회", description = "사용자의 닉네임과 프로필 이미지를 조회합니다.")
+    @GetMapping("/me")
+    public  ResponseEntity<BaseResponse<GetUserInfoResponse>> getUserInfo() {
+        return ResponseEntity.ok(BaseResponse.ok(userService.getUserInfo()));
+    }
 }
