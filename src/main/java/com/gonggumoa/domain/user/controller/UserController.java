@@ -126,4 +126,11 @@ public class UserController {
         userService.deleteUser();
         return ResponseEntity.ok(BaseResponse.ok(null));
     }
+
+    @Operation(summary = "로그아웃", description = "현재 로그인한 사용자를 로그아웃 처리합니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<BaseResponse<Void>> logout() {
+        userService.logout();
+        return ResponseEntity.ok(BaseResponse.ok(null));
+    }
 }
