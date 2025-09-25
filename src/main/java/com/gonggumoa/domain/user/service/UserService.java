@@ -193,4 +193,10 @@ public class UserService {
 
         userRepository.delete(user);
     }
+
+    public void logout() {
+        Long userId = UserContext.getUserId();
+
+        redisService.deleteRefreshToken(userId);
+    }
 }
