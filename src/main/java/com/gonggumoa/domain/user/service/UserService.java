@@ -8,6 +8,7 @@ import com.gonggumoa.domain.user.repository.UserRepository;
 
 import com.gonggumoa.global.context.UserContext;
 import com.gonggumoa.global.exception.RequiredFieldMissingException;
+import com.gonggumoa.global.s3.S3Service;
 import com.gonggumoa.global.security.jwt.JwtTokenProvider;
 import com.gonggumoa.global.redis.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*;
@@ -37,6 +39,7 @@ public class UserService {
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtTokenProvider tokenProvider;
     private final RedisService redisService;
+    private final S3Service s3Service;
 
 
     public void validateEmail(String email) {
@@ -194,9 +197,25 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
     public void logout() {
         Long userId = UserContext.getUserId();
 
         redisService.deleteRefreshToken(userId);
+    }
+
+    public PostProfileImageUrlResponse generateUploadUrl(PostProfileImageUrlRequest request) {
+        Long userId = UserContext.getUserId();
+
+        Map<String, String> presignedUrlResult = s3Service.generatePresignedUrl(
+                request.filename(),
+                request.contentType(),
+                userId
+        );
+
+        return new PostProfileImageUrlResponse(
+                presignedUrlResult.get("uploadUrl"),
+                presignedUrlResult.get("s3Key")
+        );
     }
 }
