@@ -22,6 +22,15 @@ spring:
           starttls:
             enable: true
             required: true
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: dummy-access-key
+        secret-key: dummy-secret-key
+      s3:
+        bucket: test-bucket
 
   data:
     redis:

@@ -5,6 +5,7 @@ import com.gonggumoa.domain.user.dto.response.*;
 import com.gonggumoa.domain.user.service.UserService;
 import com.gonggumoa.global.docs.DocumentedApiErrors;
 import com.gonggumoa.global.response.BaseResponse;
+import com.gonggumoa.global.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ import static com.gonggumoa.global.response.status.BaseExceptionResponseStatus.*
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final S3Service s3Service;
 
     @Operation(summary = "회원가입", description = "새로운 회원을 생성합니다.")
     @PostMapping("/signup")
@@ -132,5 +134,13 @@ public class UserController {
     public ResponseEntity<BaseResponse<Void>> logout() {
         userService.logout();
         return ResponseEntity.ok(BaseResponse.ok(null));
+    }
+
+    @Operation(summary = "프로필 이미지 업로드용 Presigned URL 발급")
+    @PostMapping("/profile-image/presigned")
+    public ResponseEntity<BaseResponse<PostProfileImageUrlResponse>> getPresignedUrl(
+            @RequestBody @Valid PostProfileImageUrlRequest request
+    ) {
+        return ResponseEntity.ok(BaseResponse.ok(userService.generateUploadUrl(request)));
     }
 }

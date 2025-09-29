@@ -13,7 +13,7 @@ public record PutUserInfoRequest(
         @NotBlank
         String password,
 
-        @Schema(description = "변경할 프로필 이미지 URL", example = "https://s3.ap-northeast-2.amazonaws.com/bucket/profile/123.png")
+        @Schema(description = "변경할 프로필 이미지 S3 Key", example = "profile/user-1/uuid-profile.png")
         @NotNull
         String profileImageUrl
 ) {
